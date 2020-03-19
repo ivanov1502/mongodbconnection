@@ -12,23 +12,33 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Connect to MongoDB
+mongoose
+    .connect(
+        //'mongodb+srv://ivanov1502:mikelancelo1.@cluster0-q271w.mongodb.net/test?retryWrites=true&w=majority',
+        'mongodb+srv://ivanov1502:mikelancelo1.@cluster0-q271w.mongodb.net/Ivanov?retryWrites=true&w=majority', 
+      { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true }
+    )
+    .then(() => console.log('MongoDB Connected'))
+    .catch(err => console.log(err));
+
+//define mongoose schema
+var schemaName = new Schema({
+    title: String
+}, {
+    collection: 'ivanov'
+});
+
+var IvanovModel = mongoose.model('IvanovModel', schemaName);
+
 app.get("/", (req, res) => {
-  var query = req.params.query;
     //get data from db
 
-    var schemaName = new Schema({
-        title: String
-    }, {
-        collection: 'ivanov'
-    });
-
-    var Model = mongoose.model('Model', schemaName);
-    mongoose.connect('mongodb+srv://ivanov1502:mikelancelo1.@cluster0-q271w.mongodb.net/test?retryWrites=true&w=majority');
-    Model.find({
+    IvanovModel.find({
     }, function(err, result) {
         if (err) throw err;
         if (result) {
-              console.log(result);
+            //console.log(result);
             res.json(result)
         } else {
             res.send(JSON.stringify({
@@ -36,8 +46,6 @@ app.get("/", (req, res) => {
             }));
         }
     });
-
-
   });
 
 const PORT = 7777;
